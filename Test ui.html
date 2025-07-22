@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naive Bayes Bantuan</title>
+    <!-- Font Awesome CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Roboto:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Background */
+        body {
+            background-image: url("1000.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            /* Ensures the background stays fixed */
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100vh;
+            align-items: center;
+        }
+
+        /* Wrapper for the form and results */
+        .wrapper {
+            width: 100%;
+            /* Wrapper full width */
+            max-width: 600px;
+            /* Max width to make sure form isn't too wide */
+            background: #ffffff;
+            border-radius: 5px;
+            border: 10px solid #ffffff;
+            border-image: linear-gradient(to bottom, #116b8f, #1c81a9) 1;
+            margin-top: 20px;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Title styling */
+        .wrapper h1 {
+            text-align: center;
+            color: #116b8f;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* Form inputs styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            /* Add space below the label */
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            /* Full width for inputs */
+            margin-bottom: 15px;
+            /* Space below the input */
+        }
+
+        /* Button styling */
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Result section */
+        #result {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #layakResult {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Navbar styling */
+        nav {
+            width: 100%;
+            margin: auto;
+            display: flex;
+            line-height: 80px;
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            background: #116b8f;
+            z-index: 1;
+            border-bottom: 1px solid #2e5381;
+            padding: 0 20px;
+            /* Menambahkan padding kiri dan kanan */
+        }
+
+        /* Navbar brand (judul) */
+        nav .navbar-brand {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding-left: 20px;
+            /* Memberikan jarak kiri */
+        }
+
+        /* Navbar links */
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            flex: 1;
+            /* Memastikan menu berada di sebelah kanan */
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        nav ul li {
+            float: left;
+        }
+
+        nav ul li a {
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            padding: 0 16px;
+            /* Memberikan jarak kiri dan kanan pada setiap link */
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Wrapper untuk form dan hasil */
+        .wrapper {
+            width: 100%;
+            /* Membuat wrapper memanjang sesuai dengan lebar layar */
+            max-width: 600px;
+            /* Menentukan lebar maksimum agar konten tidak terlalu lebar */
+            background: #ffffff;
+            border-radius: 5px;
+            border: 10px solid #ffffff;
+            border-image: linear-gradient(to bottom, #116b8f, #1c81a9) 1;
+            margin-top: 20px;
+            padding: 20px;
+            /* Memberikan padding di dalam wrapper */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Untuk memberi jarak antara border dan konten */
+        .wrapper>* {
+            padding-left: 20px;
+            /* Menambahkan jarak kiri untuk elemen-elemen dalam wrapper */
+            padding-right: 20px;
+            /* Menambahkan jarak kanan untuk elemen-elemen dalam wrapper */
+        }
+
+        /* Styling for the back-to-home button */
+        .backhome {
+            padding: 10px;
+            background-color: #1c81a9;
+            /* Blue color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 92.5%;
+            /* Make button span the full width of the wrapper */
+            margin-top: 15px;
+            /* Add some space above the button */
+            margin-left: 21px;
+            margin-right: 31px;
+        }
+
+        .backhome:hover {
+            background-color: #116b8f;
+            /* Darker blue when hovered */
+        }
+
+        /* Message for empty name */
+        #namaError {
+            color: red;
+            display: none;
+            /* Hidden by default */
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <form id="inputForm">
+            <h1>Pengecekan Kelayakan Bantuan</h1>
+            <label for="forminput" class="form-label">Nama:</label>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="forminput" placeholder="Masukkan Nama Anda">
+                <!-- Pesan kesalahan jika input nama kosong -->
+                <span id="namaError" style="color:red; display:none;">Nama harus diisi terlebih dahulu!</span>
+            </div>
+            <label for="pekerjaan">Pekerjaan:</label>
+            <select id="pekerjaan">
+                <option value="1">Wiraswasta</option>
+                <option value="2">Tidak Bekerja</option>
+            </select>
+
+            <label for="usia">Usia:</label>
+            <select id="usia">
+                <option value="1">20-29 Tahun</option>
+                <option value="2">30-40 Tahun</option>
+            </select>
+
+            <label for="status">Status:</label>
+            <select id="status">
+                <option value="1">Belum Kawin</option>
+                <option value="2">Kawin</option>
+            </select>
+
+            <label for="penghasilan">Penghasilan:</label>
+            <select id="penghasilan">
+                <option value="1">
+                    <= 1.000.000</option>
+                <option value="2">2.000.000 - 3.000.000</option>
+                <option value="3">4.000.000 - 5.000.000</option>
+                <option value="4">>= 5.000.000</option>
+            </select>
+
+            <label for="kendaraan">Kendaraan:</label>
+            <select id="kendaraan">
+                <option value="1">Motor</option>
+                <option value="2">Mobil</option>
+                <option value="3">Angkutan Umum</option>
+            </select>
+
+            <label for="rumah">Kepemilikan Rumah:</label>
+            <select id="rumah">
+                <option value="1">Menyewa</option>
+                <option value="2">Orang Tua</option>
+                <option value="3">Pribadi</option>
+            </select>
+
+            <label for="atap">Atap Bangunan:</label>
+            <select id="atap">
+                <option value="1">Asbes</option>
+                <option value="2">Genteng</option>
+            </select>
+
+            <button type="submit">Hitung Kelayakan</button>
+        </form>
+        <!-- Tombol Kembali Ke-Home -->
+        <button class="backhome" onclick="window.location.href='indeks main.html'">Kembali Ke Halaman Utama</button>
+
+        <div id="result">
+            <h2 class="mb-5">Hasil:</h2>
+            <p id="layakResult">Menunggu</p>
+        </div>
+    </div>
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        for (var i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+
+        document.getElementById('inputForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Get user input
+            const nama = document.getElementById('forminput').value;
+            const pekerjaan = parseInt(document.getElementById('pekerjaan').value);
+            const usia = parseInt(document.getElementById('usia').value);
+            const status = parseInt(document.getElementById('status').value);
+            const penghasilan = parseInt(document.getElementById('penghasilan').value);
+            const kendaraan = parseInt(document.getElementById('kendaraan').value);
+            const rumah = parseInt(document.getElementById('rumah').value);
+            const atap = parseInt(document.getElementById('atap').value);
+
+            // Check if the name is empty
+            if (nama.trim() === '') {
+                // Show error message if name is empty
+                document.getElementById('namaError').style.display = 'inline';
+                // Scroll to the 'Nama' input field
+                document.getElementById('forminput').scrollIntoView({ behavior: "smooth", block: "center" });
+                return;  // Prevent form submission if the name is empty
+            } else {
+                // Hide error message if name is not empty
+                document.getElementById('namaError').style.display = 'none';
+            }
+
+            // Probabilitas awal kelas
+            const prob_layak = 0.4;
+            const prob_tidak_layak = 0.6;
+
+            // Probabilitas atribut
+            const prob_pekerjaan_layak = (pekerjaan === 1) ? 0.57 : 0.43;
+            const prob_pekerjaan_tidak_layak = (pekerjaan === 1) ? 0.71 : 0.29;
+
+            const prob_usia_layak = (usia === 1) ? 0.57 : 0.43;
+            const prob_usia_tidak_layak = (usia === 1) ? 0.9 : 0.1;
+
+            const prob_status_layak = (status === 1) ? 0.36 : 0.64;
+            const prob_status_tidak_layak = (status === 1) ? 0.95 : 0.05;
+
+            const prob_penghasilan_layak = (penghasilan === 1) ? 0.57 : (penghasilan === 2) ? 0.43 : 0;
+            const prob_penghasilan_tidak_layak = (penghasilan === 1) ? 0.95 : (penghasilan === 2) ? 0.24 : 0.19;
+
+            const prob_kendaraan_layak = (kendaraan === 1) ? 0.86 : (kendaraan === 3) ? 0.14 : 0;
+            const prob_kendaraan_tidak_layak = (kendaraan === 1) ? 0.57 : (kendaraan === 2) ? 0.24 : 0.19;
+
+            const prob_rumah_layak = (rumah === 1 || rumah === 2) ? 0.5 : 0;
+            const prob_rumah_tidak_layak = (rumah === 1) ? 0.43 : (rumah === 2) ? 0.38 : 0.19;
+
+            const prob_atap_layak = (atap === 1) ? 0.64 : 0.36;
+            const prob_atap_tidak_layak = (atap === 1) ? 0.43 : 0.57;
+
+            // Menghitung probabilitas total untuk layak dan tidak layak
+            const total_prob_layak = prob_layak * prob_pekerjaan_layak * prob_usia_layak * prob_status_layak * prob_penghasilan_layak * prob_kendaraan_layak * prob_rumah_layak * prob_atap_layak;
+            const total_prob_tidak_layak = prob_tidak_layak * prob_pekerjaan_tidak_layak * prob_usia_tidak_layak * prob_status_tidak_layak * prob_penghasilan_tidak_layak * prob_kendaraan_tidak_layak * prob_rumah_tidak_layak * prob_atap_tidak_layak;
+
+            // Menampilkan hasil
+            const resultText = total_prob_layak > total_prob_tidak_layak
+                ? `${nama}, Anda dinyatakan LAYAK menerima bantuan.`  // Menambahkan nama dalam hasil
+                : `${nama}, Anda dinyatakan TIDAK LAYAK menerima bantuan.`;  // Menambahkan nama dalam hasil
+
+            document.getElementById('layakResult').innerHTML = `${resultText}<br>Probabilitas Layak: ${total_prob_layak.toFixed(5)}<br>Probabilitas Tidak Layak: ${total_prob_tidak_layak.toFixed(5)}`;
+        });
+    </script>
+</body>
+
+</html>
